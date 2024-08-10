@@ -1,9 +1,11 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 const App = () => {
   const [location, setLocation] = useState({ lat: 0, lng: 0 });
   const [crew, setCrew] = useState([]);
   const [time, setTime] = useState("");
+  const mapRef = useRef(null);
+  const markerRef = useRef(null);
 
   useEffect(() => {
     const fetchISSData = async () => {
@@ -15,6 +17,24 @@ const App = () => {
             lng: parseFloat(locationData.iss_position.longitude),
           };
           setLocation(newLocation);
+
+          if (mapRef.current && markerRef.current) {
+            markerRef.current.setPosition(newLocation);
+            mapRef.current.setCenter(newLocation);
+          } else {
+            const map = new google.maps.Map(document.getElementById('map'), {
+              zoom: 4,
+              center: newLocation,
+            });
+            mapRef.current = map;
+  
+            const marker = new google.maps.Marker({
+              position: newLocation,
+              map,
+              title: 'ISS Current Location',
+            });
+            markerRef.current = marker;
+          }
         } catch (error) {
           console.error('Error fetching ISS location data:', error);
         }
@@ -37,7 +57,6 @@ const App = () => {
 
         const formattedTime = `${hours}:${minutes} ${dayOfWeek}, ${day} ${month} ${year}`;
         setTime(formattedTime);
-
     };
 
     fetchISSData();
@@ -58,6 +77,7 @@ const App = () => {
           <li key={index}>{member.name}</li>
         ))}
       </ul>
+      <div id="map" style={{ height: '400px', width: '800px', marginTop: '20px' }}></div>
     </div>
   );
 };
