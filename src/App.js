@@ -1,6 +1,7 @@
 /* global google */
 
 import React, { useEffect, useState, useRef } from 'react';
+import './App.css'
 import spaceStation from './img/icon-space-station.png';
 
 const App = () => {
@@ -30,12 +31,7 @@ const App = () => {
               center: newLocation,
             });
             mapRef.current = map;
-  
-            // const marker = new google.maps.Marker({
-            //   position: newLocation,
-            //   map,
-            //   title: 'ISS Current Location',
-            // });
+
             const marker = new google.maps.Marker({
               position: newLocation,
               map: mapRef.current,
@@ -81,18 +77,25 @@ const App = () => {
   }, []);
 
   return (
-    <div>
+    <div className='container'>
       <h1>ISS Tracker</h1>
-      <p>Latitude: {location.lat}</p>
-      <p>Longitude: {location.lng}</p>
-      <p>UTC Time: {time}</p>
+      <div className='location_container'>
+      <p>ISS is now located at:</p>
+      <p>Longitude: {location.lng}, Latitude: {location.lat}</p>
+      <p>Current UTC Time: {time}</p></div>
+      
+      <div className='map_container'>
+      <div id="map" className='map'/>
+      <div className='crew_container'>
       <h2>Crew on ISS</h2>
-      <ul>
+      <ul className='crew_list'>
         {crew.map((member, index) => (
-          <li key={index}>{member.name}</li>
+          <li key={index} className='crew_item'>{member.name}</li>
         ))}
       </ul>
-      <div id="map" style={{ height: '400px', width: '800px', marginTop: '20px' }}></div>
+      <p className='text-accent'>Total crew members: {crew.length}</p>
+      </div>
+      </div>
     </div>
   );
 };
