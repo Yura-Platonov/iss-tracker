@@ -1,4 +1,7 @@
+/* global google */
+
 import React, { useEffect, useState, useRef } from 'react';
+import spaceStation from './img/icon-space-station.png';
 
 const App = () => {
   const [location, setLocation] = useState({ lat: 0, lng: 0 });
@@ -17,7 +20,7 @@ const App = () => {
             lng: parseFloat(locationData.iss_position.longitude),
           };
           setLocation(newLocation);
-
+          
           if (mapRef.current && markerRef.current) {
             markerRef.current.setPosition(newLocation);
             mapRef.current.setCenter(newLocation);
@@ -28,13 +31,25 @@ const App = () => {
             });
             mapRef.current = map;
   
+            // const marker = new google.maps.Marker({
+            //   position: newLocation,
+            //   map,
+            //   title: 'ISS Current Location',
+            // });
             const marker = new google.maps.Marker({
               position: newLocation,
-              map,
-              title: 'ISS Current Location',
+              map: mapRef.current,
+              icon: {
+                url: spaceStation,
+                scaledSize: new google.maps.Size(50, 50),
+                origin: new google.maps.Point(0, 0),
+                anchor: new google.maps.Point(25, 50)
+              },
+              title: 'ISS Current Location'
             });
             markerRef.current = marker;
           }
+  
         } catch (error) {
           console.error('Error fetching ISS location data:', error);
         }
